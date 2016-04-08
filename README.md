@@ -1,5 +1,4 @@
 # Presented at "Strange Loop" and "Future Programming Workshop" (2014)
-------------------------------------
 
 https://vimeo.com/110512582
 
@@ -24,7 +23,7 @@ https://vimeo.com/110512582
 * birds-13.ceu ["Birds - 13 (watching)"]
 * all.ceu      [All of the above]
 
-### Compiling and Running
+## Compiling and Running
 
 ```
 > make
