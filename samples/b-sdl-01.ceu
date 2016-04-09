@@ -1,5 +1,5 @@
 #define HEADER_TITLE "SDL - 01 (one)"
-#include "header.ceu"
+#include "header.ceu.inc"
 
 var _SDL_Rect r = _SDL_Rect(100,100,20,20);
 

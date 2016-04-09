@@ -1,12 +1,12 @@
-#define HEADER_TITLE "Birds - 03 (scopes)"
-#include "header.ceu"
+#define HEADER_TITLE "Birds - 01 (class)"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do
 #endif
 
 native do
-    SDL_Texture* TEX_UP, *TEX_DOWN;
+    SDL_Texture *TEX_UP, *TEX_DOWN;
 end
     finalize
         _TEX_UP = _IMG_LoadTexture(_REN, "res/clumsy_up.png");
@@ -26,7 +26,7 @@ end
 #define PI 3.14
 
 class Bird with
-    var _SDL_Renderer&? ren;
+    var _SDL_Renderer& ren;
     var _SDL_Rect r;
     var int speed;
 do
@@ -48,9 +48,9 @@ do
     with
         every SDL_REDRAW do
             if ((int)((sin+PI/2)/PI)) % 2 == 0 then
-                _SDL_RenderCopy(&&ren!, _TEX_DOWN, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_DOWN, null, &&r);
             else
-                _SDL_RenderCopy(&&ren!, _TEX_UP, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_UP, null, &&r);
             end
         end
     end
@@ -62,16 +62,17 @@ par/or do
         _SDL_RenderFillRect(_REN, null);
     end
 with
-    loop do
-        var int i = 1;
-        var Bird[5] bs with
-            this.ren   = &_ID(_REN);
-            this.r     = _SDL_Rect(0,20*4*i,0,0);
-            this.speed = 100 + 10*i;
-            i = i + 1;
-        end;
-        await SDL_MOUSEBUTTONDOWN;
-    end
+    var Bird b1 with
+        this.ren   = &_ID(_REN);
+        this.r     = _SDL_Rect(0,100,0,0);
+        this.speed = 100;
+    end;
+    var Bird b2 with
+        this.ren   = &_ID(_REN);
+        this.r     = _SDL_Rect(0,300,0,0);
+        this.speed = 200;
+    end;
+    await FOREVER;
 with
     every SDL_REDRAW do
         _SDL_RenderPresent(_REN);

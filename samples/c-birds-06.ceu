@@ -1,12 +1,12 @@
-#define HEADER_TITLE "Birds - 02 (vectors)"
-#include "header.ceu"
+#define HEADER_TITLE "Birds - 06 (dynamic-reclamation)"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do
 #endif
 
 native do
-    SDL_Texture *TEX_UP, *TEX_DOWN;
+    SDL_Texture* TEX_UP, *TEX_DOWN;
 end
     finalize
         _TEX_UP = _IMG_LoadTexture(_REN, "res/clumsy_up.png");
@@ -26,7 +26,7 @@ end
 #define PI 3.14
 
 class Bird with
-    var _SDL_Renderer&? ren;
+    var _SDL_Renderer& ren;
     var _SDL_Rect r;
     var int speed;
 do
@@ -35,22 +35,26 @@ do
     this.r.h = 45;
 
     var float sin = 0;
-    par do
+    par/or do
         var int y = r.y;
         var float x = r.x;
-        every dt in SDL_DT do
+        loop do
+            var int dt = await SDL_DT;
             var float v = dt*speed;
             x = x + v/1000;
             r.x = x;
             r.y = y + speed/5*_sin(sin);
             sin = sin + PI*v/100000;
+            if r.x > 580 then
+                break;
+            end
         end
     with
         every SDL_REDRAW do
             if ((int)((sin+PI/2)/PI)) % 2 == 0 then
-                _SDL_RenderCopy(&&ren!, _TEX_DOWN, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_DOWN, null, &&r);
             else
-                _SDL_RenderCopy(&&ren!, _TEX_UP, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_UP, null, &&r);
             end
         end
     end
@@ -62,14 +66,23 @@ par/or do
         _SDL_RenderFillRect(_REN, null);
     end
 with
-    var int i = 1;
-    var Bird[5] bs with
-        this.ren   = &_ID(_REN);
-        this.r     = _SDL_Rect(0,20*4*i,0,0);
-        this.speed = 100 + 10*i;
-        i = i + 1;
-    end;
-    await FOREVER;
+#ifdef CEU_TIMEMACHINE
+    pool Bird[100] birds;
+#else
+    pool Bird[] birds;
+#endif
+    every 1s do
+        spawn Bird in birds with
+            this.ren   = &_ID(_REN);
+#ifdef CEU_TIMEMACHINE
+            this.r     = _SDL_Rect(0, 20+_drand()%350, 0,0);
+            this.speed = 100 + _drand()%100;
+#else
+            this.r     = _SDL_Rect(0, 20+_rand()%350, 0,0);
+            this.speed = 100 + _rand()%100;
+#endif
+        end;
+    end
 with
     every SDL_REDRAW do
         _SDL_RenderPresent(_REN);

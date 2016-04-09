@@ -1,12 +1,11 @@
-#define HEADER_TITLE "LED - 03 (repeat)"
-#include "header.ceu"
+#define HEADER_TITLE "LED - 02 (stop)"
+#include "header.ceu.inc"
 
 var bool is_on = false;
 
 par/or do
     await SDL_QUIT;
 with
-    loop do
         par/or do
             loop do
                 await 500ms;
@@ -15,8 +14,7 @@ with
         with
             await SDL_MOUSEBUTTONDOWN;
         end
-        await 2s;
-    end
+    await FOREVER;
 with
     every SDL_REDRAW do
         _boxRGBA(_REN, 0,0,_REN_W,_REN_H, 0xCC,0xCC,0xCC,0xFF);

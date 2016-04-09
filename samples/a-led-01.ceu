@@ -1,20 +1,15 @@
-#define HEADER_TITLE "LED - 02 (stop)"
-#include "header.ceu"
+#define HEADER_TITLE "LED - 01 (blinking)"
+#include "header.ceu.inc"
 
 var bool is_on = false;
 
 par/or do
     await SDL_QUIT;
 with
-        par/or do
             loop do
                 await 500ms;
                 is_on = not is_on;
             end
-        with
-            await SDL_MOUSEBUTTONDOWN;
-        end
-    await FOREVER;
 with
     every SDL_REDRAW do
         _boxRGBA(_REN, 0,0,_REN_W,_REN_H, 0xCC,0xCC,0xCC,0xFF);

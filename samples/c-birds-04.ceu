@@ -1,5 +1,5 @@
-#define HEADER_TITLE "Birds - 06 (dynamic-reclamation)"
-#include "header.ceu"
+#define HEADER_TITLE "Birds - 04 (dynamic)"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do
@@ -35,19 +35,15 @@ do
     this.r.h = 45;
 
     var float sin = 0;
-    par/or do
+    par do
         var int y = r.y;
         var float x = r.x;
-        loop do
-            var int dt = await SDL_DT;
+        every dt in SDL_DT do
             var float v = dt*speed;
             x = x + v/1000;
             r.x = x;
             r.y = y + speed/5*_sin(sin);
             sin = sin + PI*v/100000;
-            if r.x > 580 then
-                break;
-            end
         end
     with
         every SDL_REDRAW do

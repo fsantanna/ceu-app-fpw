@@ -1,5 +1,5 @@
-#define HEADER_TITLE "Birds - 08 (pools-unbounded)"
-#include "header.ceu"
+#define HEADER_TITLE "Birds - 09 (pools-scope)"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do
@@ -26,7 +26,7 @@ end
 #define PI 3.14
 
 class Bird with
-    var _SDL_Renderer&? ren;
+    var _SDL_Renderer& ren;
     var _SDL_Rect r;
     var int speed;
 do
@@ -52,9 +52,9 @@ do
     with
         every SDL_REDRAW do
             if ((int)((sin+PI/2)/PI)) % 2 == 0 then
-                _SDL_RenderCopy(&&ren!, _TEX_DOWN, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_DOWN, null, &&r);
             else
-                _SDL_RenderCopy(&&ren!, _TEX_UP, null, &&r);
+                _SDL_RenderCopy(&&ren, _TEX_UP, null, &&r);
             end
         end
     end
@@ -66,22 +66,28 @@ par/or do
         _SDL_RenderFillRect(_REN, null);
     end
 with
+    loop do
+        par/or do
 #ifdef CEU_TIMEMACHINE
-    pool Bird[100] birds;
+            pool Bird[100] birds;
 #else
-    pool Bird[] birds;
+            pool Bird[] birds;
 #endif
-    every 1s do
-        spawn Bird in birds with
-            this.ren   = &_ID(_REN);
+            every 1s do
+                spawn Bird in birds with
+                    this.ren   = &_ID(_REN);
 #ifdef CEU_TIMEMACHINE
-            this.r     = _SDL_Rect(0,20+_drand()%350,0,0);
+            this.r     = _SDL_Rect(0, 20+_drand()%350, 0,0);
             this.speed = 100 + _drand()%100;
 #else
-            this.r     = _SDL_Rect(0,20+_rand()%350,0,0);
+            this.r     = _SDL_Rect(0, 20+_rand()%350, 0,0);
             this.speed = 100 + _rand()%100;
 #endif
-        end;
+                end;
+            end
+        with
+            await SDL_MOUSEBUTTONDOWN;
+        end
     end
 with
     every SDL_REDRAW do

@@ -1,5 +1,5 @@
 #define HEADER_TITLE "Birds - 11 (falling)"
-#include "header.ceu"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do

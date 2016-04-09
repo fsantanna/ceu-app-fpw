@@ -1,5 +1,5 @@
 #define HEADER_TITLE "SDL - 03 (class)"
-#include "header.ceu"
+#include "header.ceu.inc"
 
 class Rect with
     var _SDL_Renderer&? ren;

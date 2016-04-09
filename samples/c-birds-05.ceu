@@ -1,5 +1,5 @@
-#define HEADER_TITLE "Birds - 10 (iterators)"
-#include "header.ceu"
+#define HEADER_TITLE "Birds - 05 (animation-break)"
+#include "header.ceu.inc"
 
 #ifdef CEU_TIMEMACHINE
 global do
@@ -26,17 +26,16 @@ end
 #define PI 3.14
 
 class Bird with
-    var _SDL_Renderer& ren;
+    var _SDL_Renderer&? ren;
     var _SDL_Rect r;
     var int speed;
-    event void go_collide;
 do
     this.r.x = 20;
     this.r.w = 50;
     this.r.h = 45;
 
     var float sin = 0;
-    par/or do
+    par do
         var int y = r.y;
         var float x = r.x;
         loop do
@@ -51,13 +50,11 @@ do
             end
         end
     with
-        await this.go_collide;
-    with
         every SDL_REDRAW do
             if ((int)((sin+PI/2)/PI)) % 2 == 0 then
-                _SDL_RenderCopy(&&ren, _TEX_DOWN, null, &&r);
+                _SDL_RenderCopy(&&ren!, _TEX_DOWN, null, &&r);
             else
-                _SDL_RenderCopy(&&ren, _TEX_UP, null, &&r);
+                _SDL_RenderCopy(&&ren!, _TEX_UP, null, &&r);
             end
         end
     end
@@ -69,44 +66,22 @@ par/or do
         _SDL_RenderFillRect(_REN, null);
     end
 with
-    loop do
 #ifdef CEU_TIMEMACHINE
-        pool Bird[100] birds;
+    pool Bird[100] birds;
 #else
-        pool Bird[] birds;
+    pool Bird[] birds;
 #endif
-        par/or do
-            every 750ms do
-                spawn Bird in birds with
-                    this.ren   = &_ID(_REN);
+    every 1s do
+        spawn Bird in birds with
+            this.ren   = &_ID(_REN);
 #ifdef CEU_TIMEMACHINE
-                    this.r     = _SDL_Rect(0, 20+_drand()%350, 0,0);
-                    this.speed = 100 + _drand()%100;
+            this.r     = _SDL_Rect(0,20+_drand()%350,0,0);
+            this.speed = 100 + _drand()%100;
 #else
-                    this.r     = _SDL_Rect(0, 20+_rand()%350, 0,0);
-                    this.speed = 100 + _rand()%100;
+            this.r     = _SDL_Rect(0,20+_rand()%350,0,0);
+            this.speed = 100 + _rand()%100;
 #endif
-                end;
-            end
-        with
-            every SDL_DT do
-                var Bird&&?[] tocol;
-                loop b1 in birds do
-                    loop b2 in birds do
-                        if b1!=b2 and _SDL_HasIntersection(&&b1:r,&&b2:r) then
-                            tocol = []..tocol..[b1];
-                        end
-                    end
-                end
-                loop i in $tocol do
-                    if tocol[i]? then
-                        emit tocol[i]!:go_collide;
-                    end
-                end
-            end
-        with
-            await SDL_MOUSEBUTTONDOWN;
-        end
+        end;
     end
 with
     every SDL_REDRAW do
