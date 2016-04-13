@@ -2,14 +2,12 @@
 # EDIT
 ###############################################################################
 
-SDL_DIR ?= $(error set path to "<ceu-sdl>" repository)
-CEU_DIR ?= $(error set path to "<ceu>" repository)
+SDL_DIR ?= $(error set absolute path to "<ceu-sdl>" repository)
 
 ###############################################################################
 # DO NOT EDIT
 ###############################################################################
 
-ARCH_DIR ?= $(SDL_DIR)/arch
+ARCH_DIR = $(SDL_DIR)/arch
 
 include $(SDL_DIR)/Makefile
-include $(CEU_DIR)/Makefile
